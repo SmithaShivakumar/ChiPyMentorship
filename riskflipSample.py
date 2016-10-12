@@ -118,6 +118,22 @@ result13 = sm.ols(formula="returns_nasd ~ total_returns", data=df13).fit()
 print (result13.params) #, result13.summary())
 
 
+# NUMBER OF FUTURES ##############################################################################
+
+capital_invested = int(input()) # User input of the amount
+hedge_pct = float(input())  # User input of the percentage 
+symbol = "^GSPC" # sample
+history = pd.io.data.DataReader(symbol, "yahoo", start="2014/1/1") 
+
+# current_price = (history.Open.tail(1).values)
+
+no_futures = np.round((result1.params.total_returns * capital_invested * hedge_pct)/(history.Open.tail(1).values))
+
+
+print (no_futures)
+
+
+
 
 """
 
