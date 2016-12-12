@@ -1,0 +1,19 @@
+Class Portfolio :
+1.	Needs to set positions
+2.	Compute Beta of the Portfolio
+
+Class Position : takes in
+1.	Number of Shares
+2.	Name of the Asset
+    a.	Takes current value of Asset – computed property
+
+Class Asset : Finds Beta for any Market H Days
+1.	User Inputs the name
+2.	Searches the name in the dictionary of Assets
+3.	Stores the return
+    a.	Computed Property [Computes Beta of the Asset]
+
+Class User Interface :  
+Displays and interacts with the user  + computes the hedge and gives the number of futures/market index the portfolio needs to hedged with
+
+ 
