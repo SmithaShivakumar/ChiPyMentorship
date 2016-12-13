@@ -13,7 +13,7 @@ filelists = [f for f in listdir(PATH) if isfile(join(PATH, f))]
 
 
 class Asset():
-    def __init__(assetname):
+    def __init__(self,assetname):
         self.assetname = assetname
 
     def create_asset_dict(filelists):
