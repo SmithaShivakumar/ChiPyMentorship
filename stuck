@@ -1,0 +1,47 @@
+import os
+from os import listdir
+from os.path import isfile, join, basename
+import pandas as pd
+import numpy as np
+import statsmodels.formula.api as sm
+from sklearn.linear_model import LinearRegression
+
+
+PATH = r'C:\Users\smitha\Downloads\Python Scripts\Smitha\straddle_test\ForRepo\Smitha\Data\CSVS'  
+SUFFIX = '.csv'
+filelists = [f for f in listdir(PATH) if isfile(join(PATH, f))]
+
+
+class Asset():
+    def __init__(assetname):
+        self.assetname = assetname
+
+    def create_asset_dict(filelists):
+        filename = []
+        for val in filelists :
+            base = basename(val)
+            name = (os.path.splitext(base)[0])
+            filename.append(name)
+        files_dict = { i : val for i, val in enumerate(filename)} 
+        return files_dict
+
+
+    def validate_asset_name(userInput,files_dict):
+        try:
+            val = int(userInput)
+        except ValueError:
+            return False
+        if (val in files_dict):
+            assetname = files_dict[val] #(list(files_dict.keys())[list(files_dict.values()).index(assetkey)])
+            get_data(assetname)
+            return True
+        else:
+            return False
+
+
+    def get_data(asset_name):
+        assetname_ext = (asset_name + SUFFIX)
+        print(asset_name)
+        present = pd.read_csv(assetname_ext)
+#     print(present)
+        return (present)
