@@ -7,12 +7,15 @@ import statsmodels.formula.api as sm
 from sklearn.linear_model import LinearRegression
 
 
+
+
+class Asset():
+
+#can I put these hardcoded variables inside the class?
 PATH = r'C:\Users\smitha\Downloads\Python Scripts\Smitha\straddle_test\ForRepo\Smitha\Data\CSVS'  
 SUFFIX = '.csv'
 filelists = [f for f in listdir(PATH) if isfile(join(PATH, f))]
 
-
-class Asset():
     def __init__(self,assetname):
         self.assetname = assetname
 
