@@ -1,5 +1,5 @@
 Class Portfolio :
-0. Add a position
+0.  Add a position
 1.	Needs to set positions
 2.	Compute Beta of the Portfolio
 
@@ -19,3 +19,10 @@ Class User Interface :
 Displays and interacts with the user  + computes the hedge and gives the number of futures/market index the portfolio needs to hedged with
 
  
+########################  PHASE 2 #######################################################################################
+
+1. Define get_hedge on the class Portfolio
+2. Get the data saved in different csvs
+3. Figure out a way for the user to say they are done inputting assetnames and they ll create the portfolio with the ones 
+    that are already inputted
+4. MarketIndex - SPY 
