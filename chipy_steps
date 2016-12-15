@@ -1,11 +1,13 @@
 Class Portfolio :
+0. Add a position
 1.	Needs to set positions
 2.	Compute Beta of the Portfolio
 
 Class Position : takes in
 1.	Number of Shares
 2.	Name of the Asset
-    a.	Takes current value of Asset – computed property
+    a. Initializes the Asset
+    b.	Takes current value of Asset – computed property
 
 Class Asset : Finds Beta for any Market H Days
 1.	User Inputs the name
