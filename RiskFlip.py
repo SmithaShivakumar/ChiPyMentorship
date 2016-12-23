@@ -124,9 +124,9 @@ class Position(object):
 #         self.assetname = assetname
         self.num_of_shares = num_of_shares
         self.asset = Asset(assetname)
-        self.value = self.calc_value()
+        self.value = self.calc_market_value()
 
-    def calc_value(self):
+    def calc_market_value(self):
         price_of_asset = self.asset.market_price 
         value = self.num_of_shares * price_of_asset
         return value
@@ -150,12 +150,19 @@ class Portfolio(object):
         position = Position(asset_name,num_of_shares)
         self.positions.append(position)
 
+    def market_val_portfolio(self):
+        total_market_value = 0
+        for position in self.positions:
+            total_market_value += position.value
+        return total_market_value
 
     # def computingBeta(self):
     #     total_returns = Asset.returns * (num_of_assets/total_assets) 
     #     result13 = sm.ols(formula="spy_returns ~ total_returns", data=pd.concat([spy_returns, total_returns], axis =1)).fit()
 
     #     return beta
+
+
 
     def get_hedge(self,capital_invested,hedge_pct):
 
@@ -201,20 +208,16 @@ def get_position_from_user():
         print("Please try again")
         asset_name = input()
         
-
     assetnames = asset_dict[int(asset_name)]
     if assetnames == "I am done with adding assets to my portfolio":
         return (False, 0)
-    else:
 
-
-        print("How many shares of the Asset do you want to invest in")
+    print("How many shares of the Asset do you want to invest in")
+    asset_num_shares = input()
+    while not validate_num_shares(asset_num_shares):
+        print("Please input an integer!")
         asset_num_shares = input()
-        while not validate_num_shares(asset_num_shares):
-            print("Please input an integer!")
-            asset_num_shares = input()
         
-
     return (assetnames, asset_num_shares)
 
 
@@ -226,27 +229,13 @@ def get_position_from_user():
 def userinterface():
 
     new_user = Portfolio()
-    total_shares = 0
-    assets = []
 
     capital_invested, hedge_pct =  get_capital_hedge()
     asset_name, asset_num_shares = get_position_from_user()
-    # total_shares += abs(int(asset_num_shares))
-    # assets.append(asset_name)
-    # total_assets = 1 
 
     while asset_name:
-        # if asset_name == "I am done with adding assets to my portfolio":
-        #     break
         new_user.add_position(asset_name, asset_num_shares)
         asset_name, asset_num_shares = get_position_from_user()
-        total_assets += 1 
-        total_shares += abs(int(asset_num_shares))
-        assets.append(asset_name)
-
-
-    print(assets, total_assets,total_shares)
-    # totalreturnsdata = new_user.positions.asset.returns
 
     hedge_units = new_user.get_hedge(capital_invested,hedge_pct)
     if hedge_units > 0:
@@ -255,9 +244,6 @@ def userinterface():
         print("To hedge you should sell {} shares".format(hedge_units))
     else:
         print("You are fine, perfectly hedged! ")
-    # new_user
-
-
 
 
 userinterface()
