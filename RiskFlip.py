@@ -4,7 +4,7 @@ from os import listdir
 from os.path import isfile, join, basename
 import pandas as pd
 import numpy as np
-import statsmodels.formula.api as sm
+import statsmodels.api as sm
 from sklearn.linear_model import LinearRegression
 
 
@@ -101,15 +101,15 @@ class Asset(object):
         print(pwd)
         os.chdir(PATH)
         data = pd.read_csv(assetname_ext)
-        print(data)
+        data.drop_duplicates(subset = ['Date'],keep = 'first',inplace=True)
         return data
 
-    def compute_asset_beta(self):
-        returns = self.market_price.shift(1) / self.market_price - 1
-        spy_data = pd.read_csv(r'C:\Users\smitha\Documents\Python_Scripts\chipy\chipydata\SPY.csv')
-        spy_returns = spy_data['PX_LAST'].shift(1)/spy_data['PX_LAST'] - 1
-        asset_beta = sm.ols(formula="spy_returns ~ returns", data=pd.concat([spy_returns, returns], axis =1)).fit()
-        return asset_beta
+    # def compute_asset_beta(self):
+    #     returns = self.market_price.shift(1) / self.market_price - 1
+    #     spy_data = pd.read_csv(r'C:\Users\smitha\Documents\Python_Scripts\chipy\chipydata\SPY.csv')
+    #     spy_returns = spy_data['PX_LAST'].shift(1)/spy_data['PX_LAST'] - 1
+    #     asset_beta = sm.ols(formula="spy_returns ~ returns", data=pd.concat([spy_returns, returns], axis =1)).fit()
+    #     return asset_beta
 
     def returns_data(self):
         self.data['returns'] = self.data['PX_LAST'].shift(1)/self.data['PX_LAST'] - 1
@@ -163,13 +163,30 @@ class Portfolio(object):
     #     return beta
 
 
-
     def get_hedge(self,capital_invested,hedge_pct):
 
-        total_returns = self.position.asset.returns* (self.position.num_of_shares/total_assets)
-        beta = sm.ols(formula="spy_returns ~ total_returns", data=pd.concat([spy_returns, total_returns], axis =1)).fit()
-              
-        num_futures = np.round((total_returns * capital_invested * hedge_pct)/(Asset.market_price))
+        percentage_position = 0
+        total_returns = 0
+         
+        for position in self.positions:
+            percentage_position = position.value/self.market_val_portfolio()
+            total_returns += position.asset.returns * (percentage_position)
+        df = total_returns.reset_index()
+        del df['index']
+
+        spy_data = pd.read_csv(r'C:\Users\smitha\Documents\Python_Scripts\chipy\chipydata\SPY.csv')
+        spy_returns = spy_data['PX_LAST'].shift(1)/spy_data['PX_LAST'] - 1
+        
+        df['spy_returns'] = spy_returns
+        df.dropna(inplace=True)
+        df['returns'] = sm.add_constant(df['returns'])
+        model = sm.OLS(df['spy_returns'] , df['returns']).fit()
+        
+        import pdb; pdb.set_trace()
+        beta = model.params[0]
+        print(model.summary())
+        print(beta)
+        num_futures = np.round((beta* self.market_val_portfolio() * hedge_pct)/(df['spy_returns'][1]))
         return num_futures
 
 
@@ -218,7 +235,7 @@ def get_position_from_user():
         print("Please input an integer!")
         asset_num_shares = input()
         
-    return (assetnames, asset_num_shares)
+    return (assetnames, int(asset_num_shares))
 
 
 ###################################################################################################
@@ -236,6 +253,8 @@ def userinterface():
     while asset_name:
         new_user.add_position(asset_name, asset_num_shares)
         asset_name, asset_num_shares = get_position_from_user()
+
+    print("Your Portfolio is worth: ", new_user.market_val_portfolio(), "\n\n")
 
     hedge_units = new_user.get_hedge(capital_invested,hedge_pct)
     if hedge_units > 0:
