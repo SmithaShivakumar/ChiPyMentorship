@@ -101,12 +101,6 @@ class Asset(object):
         # import pdb; pdb.set_trace()
         return data
 
-    # def compute_asset_beta(self):
-    #     returns = self.market_price.shift(1) / self.market_price - 1
-    #     spy_data = pd.read_csv(r'C:\Users\smitha\Documents\Python_Scripts\chipy\chipydata\SPY.csv')
-    #     spy_returns = spy_data['PX_LAST'].shift(1)/spy_data['PX_LAST'] - 1
-    #     asset_beta = sm.ols(formula="spy_returns ~ returns", data=pd.concat([spy_returns, returns], axis =1)).fit()
-    #     return asset_beta
 
     def returns_data(self):
         self.data['returns'] = self.data['PX_LAST'].shift(1)/self.data['PX_LAST'] - 1
